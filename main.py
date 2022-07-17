@@ -21,7 +21,7 @@ class Student:
         for course in self.grades:
             grades += self.grades[course]
         mean_grade = sum(grades) / len(grades) if grades else 0
-        return mean_grade
+        return round(mean_grade, 2)
 
     def __lt__(self, other):
         if isinstance(other, Student):
@@ -55,7 +55,7 @@ class Lecturer(Mentor):
         for course in self.grades:
             grades += self.grades[course]
         mean_grade = sum(grades) / len(grades) if grades else 0
-        return mean_grade
+        return round(mean_grade, 2)
 
     def __lt__(self, other):
         if isinstance(other, Lecturer):
@@ -86,38 +86,78 @@ class Reviewer(Mentor):
         return print_data
 
 
+def mean_students_grade_per_course(students_list, course):
+    grades = []
+    for student in students_list:
+        if course in student.grades:
+            grades += student.grades.get(course)
+    mean_grade = sum(grades) / len(grades) if grades else 0
+    return round(mean_grade, 2)
+
+
+def mean_lecturers_grade_per_course(lecturers_list, course):
+    grades = []
+    for lecturer in lecturers_list:
+        if course in lecturer.grades:
+            grades += lecturer.grades.get(course)
+    mean_grade = sum(grades) / len(grades) if grades else 0
+    return round(mean_grade, 2)
+
+
 student_1 = Student('Ivan', 'Ivanov', 'male')
 student_2 = Student('Petr', 'Petrov', 'male')
 
-lector_1 = Lecturer('Nicolay', 'Lobachevskiy')
-lector_2 = Lecturer('Stanislav', 'Osipov')
+lecturer_1 = Lecturer('Nicolay', 'Lobachevskiy')
+lecturer_2 = Lecturer('Stanislav', 'Osipov')
 
 reviewer_1 = Reviewer('Aleksandr', 'Vasiliev')
 reviewer_2 = Reviewer('Oleg', 'Mihlin')
 
+student_1.courses_in_progress += ['Python']
+student_2.courses_in_progress += ['Python', 'Java']
+lecturer_1.courses_attached.append('Python')
+lecturer_2.courses_attached += ['Python', 'Java']
 
-student_1.courses_in_progress.append('Python')
-student_2.courses_in_progress.append('Python')
-lector_1.courses_attached.append('Python')
-lector_2.courses_attached.append('Python')
+student_1.rate_lecturer(lecturer_1, 'Python', 5)
+student_1.rate_lecturer(lecturer_1, 'Python', 4)
+student_2.rate_lecturer(lecturer_2, 'Python', 4)
 
-student_1.rate_lecturer(lector_1, 'Python', 5)
-student_1.rate_lecturer(lector_1, 'Python', 4)
-student_2.rate_lecturer(lector_2, 'Python', 4)
+reviewer_1.courses_attached += ['Python', 'Java']
+reviewer_2.courses_attached += ['Python', 'Java']
 
-reviewer_1.courses_attached.append('Python')
 reviewer_1.rate_hw(student_1, 'Python', 3)
 reviewer_1.rate_hw(student_1, 'Python', 5)
-reviewer_1.rate_hw(student_2, 'Python', 5)
+reviewer_1.rate_hw(student_2, 'Java', 5)
+reviewer_2.rate_hw(student_2, 'Python', 8)
 
-
-print(lector_1)
-print(lector_2)
+print(lecturer_1)
+print(lecturer_2)
 
 print(reviewer_1)
+print(reviewer_2)
 
 print(student_1)
 print(student_2)
 
-print(lector_1 > lector_2)
+print('Сравнение лекторов и студентов по средней оценке: ')
+print(lecturer_1 > lecturer_2)
 print(student_1 < student_2)
+print()
+
+best_student = max(student_1, student_2)
+print('Лучший студент: ', best_student, sep='\n')
+
+best_lecturer = max(lecturer_1, lecturer_2)
+print('Лучший лектор: ', best_lecturer, sep='\n')
+
+print(f'Средняя оценка за домашние задания по всем студентам в рамках курса {"Java"}: ',
+      mean_students_grade_per_course([student_1, student_2], 'Java'))
+print(f'Средняя оценка за домашние задания по всем студентам в рамках курса {"Python"}: ',
+      mean_students_grade_per_course([student_1, student_2], 'Python'))
+print()
+
+print(f'Средняя оценка по всем лекторам в рамках курса {"Java"}: ',
+      mean_lecturers_grade_per_course([lecturer_1, lecturer_2], 'Java'))
+print(f'Средняя оценка по всем лекторам в рамках курса {"Python"}: ',
+      mean_lecturers_grade_per_course([lecturer_1, lecturer_2], 'Python'))
+print()
